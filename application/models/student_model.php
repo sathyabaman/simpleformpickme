@@ -25,7 +25,7 @@ class Student_model extends CI_Model {
     function get_all_students(){
       $where = array('status' => 1);
       $this->db->select('*');
-      $this->db->order_by("id", "asc"); 
+      $this->db->order_by("id", "desc"); 
       $this->db->where($where); 
       $this->db->from('student'); 
       $query = $this->db->get();

@@ -36,31 +36,11 @@
         <div id="sidebar-wrapper">
             <ul class="sidebar-nav">
                 <li class="sidebar-brand">
-                    <a href="#">
-                        Start Bootstrap
+                    <a href="student/dashboard/">
+                        Home
                     </a>
                 </li>
-                <li>
-                    <a href="#">Dashboard</a>
-                </li>
-                <li>
-                    <a href="#">Shortcuts</a>
-                </li>
-                <li>
-                    <a href="#">Overview</a>
-                </li>
-                <li>
-                    <a href="#">Events</a>
-                </li>
-                <li>
-                    <a href="#">About</a>
-                </li>
-                <li>
-                    <a href="#">Services</a>
-                </li>
-                <li>
-                    <a href="#">Contact</a>
-                </li>
+                
             </ul>
         </div>
         <!-- /#sidebar-wrapper -->
@@ -71,7 +51,7 @@
                 <div class="row">
                     <div class="col-lg-12">
                         <h1>Student Database</h1>
-                        <p>Welcome to my fucking student database.</p>
+                        <p>Welcome to my student database.</p>
                         <p></p>
                         <a href="#menu-toggle" class="btn btn-default" id="menu-toggle">Toggle Menu</a>
 
@@ -120,8 +100,8 @@
                                     <td><?=$student->nic?></td>
                                     <td><?=$student->created_date?></td>
                                     <td><?=$student->updated_date?></td>
-                                    <td><a href="#"><img  id="view_student" data-student-id="<?=$student->id?>" height="30" width="30" src="<?php echo base_url(); ?>bootstarp/images/view.png"></a></td>
-                                    <td><a href="#"><img class="edit_student" data-student-id="<?=$student->id?>" height="30" width="30" data-toggle="modal" data-target="#myEditModal"src="<?php echo base_url(); ?>bootstarp/images/edit.png"></a></td>
+                                    <td><a href="#"><img  class="view_student" data-student-id="<?=$student->id?>" height="30" width="30" data-toggle="modal" data-target="#myViewModal" src="<?php echo base_url(); ?>bootstarp/images/view.png"></a></td>
+                                    <td><a href="#"><img class="edit_student" data-student-id="<?=$student->id?>" height="30" width="30" data-toggle="modal" data-target="#myEditModal" src="<?php echo base_url(); ?>bootstarp/images/edit.png"></a></td>
                                 </tr>
                             <?php endforeach; ?>
                             </tbody>
@@ -236,6 +216,54 @@
 
 
 
+    <!-- View Modal -->
+        <div id="myViewModal" class="modal fade" role="dialog">
+          <div class="modal-dialog">
+
+            <!-- Modal content-->
+            <div class="modal-content">
+              <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h4 class="modal-title">View Student</h4>
+              </div>
+              <div class="modal-body">
+                <form>
+                    <table>
+                    <p style="color: red;" id="error"></p>
+                        <tr> 
+                            <td>
+                             Student id : <p id="vid"></p>
+                            </td>
+                        </tr>
+                        <tr >
+                            <td>
+                            Student Name : <p id="vname"></p>
+                            </td>
+                        </tr>
+
+                        <tr>
+                            <td>Student Address : <p id="vaddress"></p>
+                            </td>
+                          
+                        </tr>
+
+                        <tr>
+                            <td>NIC Number : <p id="vnic"></p>
+                            </td>
+                        </tr>
+                    </table>
+                </form>
+              </div>
+              <div class="modal-footer">
+              <button type="button" class="btn btn-info btn-lg" id="btn_edit_student">Edit Student</button>
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+
 
 
     </div>
@@ -265,6 +293,29 @@
      <script type="text/javascript">
         $(document).ready (function(){
 
+            $(".view_student").click(function(){
+                    var student_id = $(this).data('student-id');
+                    console.log("Student ID : "+ student_id);
+                      $.ajax({
+                              type:"POST",
+                              dataType: 'json',
+                              url:"<?php echo base_url('student/get_single_student/'); ?>",
+                              data: {student_id: student_id},
+                              success: function(data) {
+                                        console.log(data);
+                                        console.log(data.Sstudent);
+                                        for (var i = 0; i < data.Sstudent.length; i++) {
+                                            $('#vid').html(data.Sstudent[i].id);                  
+                                            $('#vname').html(data.Sstudent[i].name);
+                                            $('#vaddress').html(data.Sstudent[i].address);
+                                            $('#vnic').html(data.Sstudent[i].nic);
+                                        }
+                                    }
+                                });
+            });
+
+
+
             $(".edit_student").click(function(){
                     var student_id = $(this).data('student-id');
                     console.log("Student ID : "+ student_id);
@@ -286,7 +337,10 @@
                                 });
             });
 
+
         
+
+
          $("#btn_edit_student").click( function(){
                var id          = $('form #Eid').val();
                var name        = $('form #Ename').val();
@@ -310,6 +364,8 @@
                 location.reload();
               }
          });
+
+
 
 
 
@@ -337,6 +393,8 @@
               }
            });
         });
+
+
 
         function isValid(name, address, nic){
 
